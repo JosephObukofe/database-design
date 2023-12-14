@@ -1,0 +1,288 @@
+Table "brt"."passenger_details" {
+  "id" serial [pk, increment]
+  "first_name" varchar(20) [not null]
+  "last_name" varchar(20) [not null]
+  "gender" varchar(6) [not null]
+  "date_of_birth" date [not null]
+}
+
+Table "brt"."passenger_email_address" {
+  "id" serial [pk, increment]
+  "email_address" varchar(50) [unique, not null]
+  "passenger_id" integer
+}
+
+Table "brt"."passenger_phone_number" {
+  "id" serial [pk, increment]
+  "phone_number" varchar(12) [unique, not null]
+  "passenger_id" integer
+}
+
+Table "brt"."passenger_payment_cards" {
+  "id" serial [pk, increment] 
+  "card_number" char(10) [unique, not null]
+  "card_balance" "decimal(7, 2)" [default: `2000`]
+  "phone_id" integer [unique]
+}
+
+Table "brt"."lga" {
+  "id" serial [pk, increment]
+  "name" varchar(20) [unique, not null]
+  "postal_code" char(6) [unique, not null]
+}
+
+Table "brt"."passenger_address" {
+  "id" serial [pk, increment]
+  "building_number" varchar(4) [not null]
+  "street_name" varchar(50) [not null]
+  "lg_id" integer
+}
+
+Table "brt"."passenger_address_pairings" {
+  "id" serial [increment]
+  "passenger_id" integer
+  "address_id" integer
+  "pair_date" timestamp [default: `now()::timestamp(0)`]
+
+Indexes {
+  (passenger_id, address_id) [pk]
+}
+}
+
+Table "brt"."terminals" {
+  "id" serial [pk, increment]
+  "name" varchar(20) [unique, not null]
+}
+
+Table "brt"."lga_terminal_pairing" {
+  "id" serial [increment]
+  "lg_id" integer
+  "terminal_id" integer
+
+Indexes {
+  (lg_id, terminal_id) [pk]
+}
+}
+
+Table "brt"."driver_details" {
+  "id" serial [pk, increment]
+  "first_name" varchar(20) [not null]
+  "last_name" varchar(20) [not null]
+  "gender" varchar(6) [not null]
+  "date_of_birth" date [not null]
+  "terminal_id" integer [not null]
+  "registration_status" boolean [not null]
+}
+
+Table "brt"."driver_email_address" {
+  "id" serial [pk, increment]
+  "email_address" varchar(50) [unique, not null]
+  "driver_id" integer
+}
+
+Table "brt"."driver_phone_number" {
+  "id" serial [pk, increment]
+  "phone_number" varchar(12) [unique, not null]
+  "driver_id" integer
+}
+
+Table "brt"."driver_payment_cards" {
+  "id" serial [pk, increment]
+  "card_number" char(10) [unique, not null]
+  "card_balance" "decimal(8, 2)" [not null, default: 0]
+  "tip_balance" "decimal(7, 2)" [not null, default: 0]
+  "phone_id" integer [unique]
+}
+
+Table "brt"."driver_address" {
+  "id" serial [pk, increment]
+  "building_number" varchar(4) [not null]
+  "street_name" varchar(50) [not null]
+  "lg_id" integer
+}
+
+Table "brt"."driver_address_pairings" {
+  "id" serial [increment]
+  "driver_id" integer
+  "address_id" integer
+  "pair_date" timestamp [default: `now()::timestamp(0)`]
+
+Indexes {
+  (driver_id, address_id) [pk]
+}
+}
+
+Table "brt"."driver_license" {
+  "id" serial [pk, increment]
+  "license_number" varchar(12) [unique, not null]
+  "issue_date" date [not null]
+  "expiry_date" date [not null]
+  "license_status" varchar(7)
+  "driver_id" integer [unique]
+  "license_image_id" integer [unique]
+}
+
+Table "brt"."driver_license_images" {
+  "id" serial [pk, increment]
+  "image_data" bytea 
+  "uploaded_at" timestamp [default: `now()`]
+  "driver_id" integer [unique]
+}
+
+Table "brt"."driver_identification_cards" {
+  "id" serial [pk, increment]
+  "card_no" char(5) [unique, not null]
+  "issue_date" date [not null]
+  "driver_id" integer [unique]
+}
+
+Table "brt"."driver_nin" {
+  "id" serial [pk, increment]
+  "nin" char(11) [unique, not null]
+  "driver_id" integer [unique]
+  "nin_image_id" integer [unique]
+}
+
+Table "brt"."driver_nin_images" {
+  "id" serial [pk, increment]
+  "image_data" bytea
+  "uploaded_at" timestamp [default: `now()`]
+  "driver_id" integer [unique]
+}
+
+Table "brt"."vehicle" {
+  "id" serial [pk, increment]
+  "vin" varchar(20) [unique, not null]
+  "plate_number" varchar(10) [unique, not null]
+  "model" varchar(20) [not null]
+  "capacity" integer [not null]
+  "status" varchar(20) [not null]
+  "terminal_id" integer
+}
+
+Table "brt"."driver_vehicle_pairings" {
+  "id" serial [pk, increment]
+  "driver_id" integer
+  "vehicle_id" integer
+  "pair_date" timestamp [not null, default: `now()::timestamp`]
+}
+
+Table "brt"."scheduled_trips" {
+  "id" serial [pk, increment]
+  "dep_terminal" varchar(20) [not null]
+  "arr_terminal" varchar(20) [not null]
+  "sch_dep_time" timestamp [not null]
+  "est_arr_time" timestamp [not null]
+  "dow" varchar(10)
+  "subtotal" "decimal(6, 2)" [not null]
+  "booking_fee" "decimal(5, 2)" [not null]
+  "trip_fare" "decimal(6, 2)" [not null]
+  "max_trip_cap" smallint [not null]
+  "current_trip_cap" smallint [not null, default: `0`]
+  "trip_status" varchar(10) [not null, default: `'Ongoing'`]
+  "trip_comp_status" varchar(10) [not null, default: `'None'`]
+  "pairing_id" integer [default: `0`]
+}
+
+Table "brt"."passenger_booked_trips" {
+  "id" serial [pk, increment]
+  "passenger_id" integer
+  "trip_id" integer
+  "booking_time" timestamp [not null, default: `now()::timestamp`]
+  "amount_paid" "decimal(6, 2)"
+}
+
+Table "brt"."tickets" {
+  "id" serial [pk, increment]
+  "ticket_number" char(5) [unique, not null]
+  "booking_id" integer [unique]
+}
+
+Table "brt"."driver_trip_history" {
+  "id" serial [pk, increment]
+  "pairing_id" integer
+  "trip_id" integer
+  "trip_capacity" smallint [not null, default: `0`]
+}
+
+Table "brt"."passenger_trip_history" {
+  "id" serial [pk, increment]
+  "passenger_id" integer
+  "trip_id" integer
+  "val_stat" boolean [not null, default: `FALSE`]
+  "dep_time" timestamp
+  "arr_time" timestamp
+}
+
+Table "brt"."trip_completion_log" {
+  "id" serial [pk, increment]
+  "function" text [not null]
+  "execution_time" timestamp [default: `now()`]
+  "completed_trip" integer
+}
+
+Ref:"brt"."passenger_details"."id" < "brt"."passenger_email_address"."passenger_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."passenger_details"."id" < "brt"."passenger_phone_number"."passenger_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."passenger_phone_number"."id" - "brt"."passenger_payment_cards"."phone_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."lga"."id" < "brt"."passenger_address"."lg_id" [update: cascade, delete: restrict]
+
+Ref:"brt"."passenger_details"."id" < "brt"."passenger_address_pairings"."passenger_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."passenger_address"."id" < "brt"."passenger_address_pairings"."address_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."lga"."id" < "brt"."lga_terminal_pairing"."lg_id" [update: cascade]
+
+Ref:"brt"."terminals"."id" < "brt"."lga_terminal_pairing"."terminal_id" [update: cascade, delete: restrict]
+
+Ref:"brt"."terminals"."id" < "brt"."driver_details"."terminal_id" [update: cascade]
+
+Ref:"brt"."driver_details"."id" < "brt"."driver_email_address"."driver_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."driver_details"."id" < "brt"."driver_phone_number"."driver_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."driver_phone_number"."id" - "brt"."driver_payment_cards"."phone_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."lga"."id" < "brt"."driver_address"."lg_id" [update: cascade, delete: restrict]
+
+Ref:"brt"."driver_details"."id" < "brt"."driver_address_pairings"."driver_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."driver_address"."id" < "brt"."driver_address_pairings"."address_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."driver_details"."id" - "brt"."driver_license"."driver_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."driver_details"."id" - "brt"."driver_identification_cards"."driver_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."driver_details"."id" - "brt"."driver_nin"."driver_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."terminals"."id" < "brt"."vehicle"."terminal_id" [update: cascade]
+
+Ref:"brt"."driver_details"."id" < "brt"."driver_vehicle_pairings"."driver_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."vehicle"."id" < "brt"."driver_vehicle_pairings"."vehicle_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."driver_vehicle_pairings"."id" < "brt"."scheduled_trips"."pairing_id" [update: cascade, delete: set default]
+
+Ref:"brt"."passenger_details"."id" < "brt"."passenger_booked_trips"."passenger_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."scheduled_trips"."id" < "brt"."passenger_booked_trips"."trip_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."passenger_booked_trips"."id" - "brt"."tickets"."booking_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."driver_vehicle_pairings"."id" < "brt"."driver_trip_history"."pairing_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."scheduled_trips"."id" < "brt"."driver_trip_history"."trip_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."passenger_details"."id" < "brt"."passenger_trip_history"."passenger_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."scheduled_trips"."id" < "brt"."passenger_trip_history"."trip_id" [update: cascade, delete: cascade]
+
+Ref:"brt"."driver_license"."license_image_id" - "brt"."driver_license_images"."id" [update: cascade, delete: cascade]
+
+Ref:"brt"."driver_license_images"."driver_id" - "brt"."driver_details"."id" [update: cascade, delete: cascade]
+
+Ref:"brt"."driver_nin"."nin_image_id" - "brt"."driver_nin_images"."id" [update: cascade, delete: cascade]
+
+Ref:"brt"."driver_nin_images"."driver_id" - "brt"."driver_details"."id" [update: cascade, delete: cascade]
