@@ -1,4 +1,4 @@
--- 
+-- This procedure facilitates payments for booked trips
 
 CREATE OR REPLACE PROCEDURE brt.trip_payments(
     card_id brt.passenger_payment_cards.id%type,
@@ -31,14 +31,14 @@ BEGIN
 
     -- Content validation to ascertain the existence of the passenger card
     IF NOT EXISTS (SELECT 1 FROM brt.passenger_payment_cards WHERE id = card_id) THEN
-        RAISE EXCEPTION ''
-            USING HINT = '';
+        RAISE EXCEPTION 'The provided passenger card does not exist'
+            USING HINT = 'Ensure a parent record exists for the provided card ID';
     END IF;
 
     -- Content validation to ascertain the existence of the scheduled trip
     IF NOT EXISTS (SELECT 1 FROM brt.scheduled_trips WHERE id = scheduled_trip_id) THEN
-        RAISE EXCEPTION ''
-            USING HINT = '';
+        RAISE EXCEPTION 'The provided trip does not exist'
+            USING HINT = 'Ensure a parent record exists for the provided scheduled trip ID';
     END IF;
 
     -- Getting the passenger's card balance 
