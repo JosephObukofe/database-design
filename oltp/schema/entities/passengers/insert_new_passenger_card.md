@@ -1,5 +1,0 @@
-The trigger function `brt.insert_new_passenger_card()` is triggered after an `INSERT` operation on the `brt.passenger_phone_number` table. When a new row is inserted into the `brt.passenger_phone_number` table, the trigger function is executed for that inserted row.
-
-Inside the trigger function, `NEW.id` represents the value of the `id` column of the newly inserted row in the `brt.passenger_phone_number` table. It is used to associate the newly generated payment card with the corresponding passenger phone number.
-
-The trigger function retrieves the generated random character sequence and assigns it to the `card_num` variable. It sets an initial balance of `2000.00` to the new card. Then, it inserts the `card_num`, `card_bal`, and `NEW.id` values into the `brt.passenger_payment_cards` table.

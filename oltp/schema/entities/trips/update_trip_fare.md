@@ -1,1 +1,0 @@
-The trigger is set to execute the `brt.generate_dow()` function for each row being inserted. This means that whenever a new row is inserted into the `brt.scheduled_trips` table, the trigger will automatically invoke the `brt.generate_dow()` function, which will calculate the day of the week based on the `sch_dep_time` value and update the `dow` column of the new row.
