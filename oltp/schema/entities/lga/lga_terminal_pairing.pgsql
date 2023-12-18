@@ -1,3 +1,5 @@
+-- This procedure pairs an LGA to a Terminal
+
 CREATE OR REPLACE PROCEDURE brt.lga_terminal_pairing_operation(
     lg brt.lga.id%type,
     terminal brt.terminals.id%type
@@ -49,9 +51,9 @@ BEGIN
 END;
 $$
 
-BEGIN;
-    CALL brt.lga_terminal_pairing(
-        lga := [ ],
-        terminal := [ ]
-    );
-COMMIT;
+-- Executing the pairing procedure
+
+CALL brt.lga_terminal_pairing(
+    lga := [ ],
+    terminal := [ ]
+);
