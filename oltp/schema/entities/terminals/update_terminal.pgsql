@@ -1,4 +1,4 @@
--- This procedure mofies an existing terminal
+-- This procedure modifies an existing terminal
 
 CREATE OR REPLACE PROCEDURE brt.update_terminal (
     terminal_id brt.terminals.id%type,
@@ -10,7 +10,6 @@ DECLARE
     former_terminal brt.terminals.name%type;
     query text;
 BEGIN 
-
     -- Input validation for null checks
     IF terminal_id IS NULL OR terminal_name IS NULL THEN   
         RAISE EXCEPTION 'All fields must be provided';
