@@ -37,15 +37,10 @@ BEGIN
 END;
 $$
 
--- Begin a new database transaction
-BEGIN;
-
 -- Call the 'insert_new_driver_license_image' stored procedure
 CALL brt.insert_new_driver_license_image (
     image := [], -- Image data in hexadecimal representation eg. E'//*******
     d_id := []
 );
 
--- Commit the transaction
-COMMIT;
 
