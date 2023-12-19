@@ -78,11 +78,33 @@ The extensions implemented in this database are:
 
 ### The `pgAgent` extension
 
+`pgAgent` is a job scheduling agent for PostgreSQL, designed to automate and manage the execution of tasks within the database. It serves as a crucial tool for database administrators and developers to automate recurring jobs, such as data maintenance, backups, and routine updates. Some notable features are job scheduling, concurrency control, logging, and monitoring. 
 
 
 ### The `plpgsql` extension - PostgreSQL Procedural Language
 
+In contrast to SQL being a declarative language that tells the query compiler what to do, `plpgsql` is a procedural language that tells the compiler **how** to do the said task. It allows users to write stored procedures, functions, and triggers using the SQL language augmented with procedural elements. 
 
+Think of the database as a cake factory and the query compiler is the attendee. The cake (stored in the database tables) would be our data to be retrieved/bought. For a declarative language like SQL, the buyer (you) tells the attendee what cake you would like to get, the flavor, from what shelf, and with what kind of icing, and so on. In the case of a procedural language like `plpgsql`, you are given all the ingredients you need to bake a cake you want and how you want it. This dynamic and finely grounded control enables a much more precise way to define custom database logic within the database itself.
+
+Key features of `plpgsql` are function definition by the advent of UDFs, stored procedures, procedural elements such as loops, conditionals and exception handling, and database triggers. 
+
+Example: The code below is written in `plpgsql`
+
+```sql
+DO
+$$
+DECLARE
+    var text;
+BEGIN
+    var := 'Hello World';
+    RAISE NOTICE '$1', var;
+END;
+$$;
+
+```
+
+The procedural constructs in `plpgsql` allow for more sophisticated logic and implementation of complex business requirements compared to standard SQL.
 
 ### The `pgcrypto` extension
 
@@ -121,6 +143,7 @@ Where `md5(random()::text)` corresponds to the string input (hash), 1 is the sta
 
 The Entity-Relationship Model Diagram, also known as an ERD, provides a visual representation of the relationships between different entities/entity set in the database. In our Lagos BRT System, this diagram is crucial for understanding how buses, routes, and passengers interact within the database.
 
+![BRT Database Schema](/Users/josephobukofe/Downloads/BRT Database Schema.jpeg)
 
 
 ## Query Optimization
@@ -182,6 +205,7 @@ CALL brt.delete_lga (
 ```
 
 Instead of constructing a static `DELETE` query and just replacing the value of the `WHERE` condition with the ID value, the cached query plan can be reused over and over with different ID values without the overhead of query compilation. This significantly boosts query performance and overall resource optimization in the database.
+
 
 ## Database Automation
 
@@ -495,6 +519,7 @@ The input parameters = `pass_id`, `old_passenger_phone_number`, and `new_passeng
 
 These placeholder values would be replaced by sanitized user inputs and then executed, enforcing data security and integrity.
 
+
 ## Getting Started
 
 To explore and contribute to the project, follow these steps:
@@ -502,10 +527,12 @@ To explore and contribute to the project, follow these steps:
 1. Clone the repository: `git clone https://github.com/your-username/lagos-brt-database.git`
 2. Navigate to specific sections like [Schema](/schema-scripts), [UDFs](/udf-scripts), [Stored Procedures](/stored-procedures), or [Triggers](/trigger-scripts).
 3. Execute the scripts in a PostgreSQL environment to set up the database.
+   
 
 ## Contributing
 
 Contributions are welcome! Feel free to submit issues, fork the repository, and create pull requests. Follow the [Contribution Guidelines](CONTRIBUTING.md) for more details.
+
 
 ## License
 
