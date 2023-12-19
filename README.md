@@ -136,7 +136,7 @@ Regular analysis of query execution plans is performed to identify bottlenecks a
 The `EXPLAIN` statement was used for such process given as:
 
 ```sql
-    EXPLAIN VERBOSE SELECT * FROM <table> WHERE <condition>;
+EXPLAIN VERBOSE SELECT * FROM <table> WHERE <condition>;
 ```
 
 #### Query Execution Plan Caching
