@@ -285,7 +285,7 @@ CREATE TRIGGER insert_new_passenger_card_trigger
 
 ```
 
-This trigger is associated with the `brt.passenger_phone_number` table and is configured to execute after an insertion operation (`AFTER INSERT`). It leverages the previously defined random character generation functions to create a unique card number and initializes a starting balance of ₦2000.00 for the new card. The trigger inserts this information into the `brt.passenger_payment_cards` table.
+This trigger is associated with the `brt.passenger_phone_number` table and is configured to execute after an insertion operation (`AFTER INSERT`). It leverages the previously defined random character generation functions to create a unique card number and initializes a starting balance of **₦2000.00** for the new card. The trigger inserts this information into the `brt.passenger_payment_cards` table.
 
 Now, every time a new passenger is registered, a payment card will be automatically generated and associated with the corresponding phone number.
 
@@ -386,7 +386,7 @@ VALUES (
 
 ```
 
-In this example, we've demonstrated the creation of a pgAgent job that automatically updates the trip availability status at regular intervals. This showcases the power of database jobs in automating routine tasks, ensuring data consistency, and enhancing overall system efficiency
+In this example, we've demonstrated the creation of a `pgAgent` job that automatically updates the trip availability status at regular intervals. This showcases the power of database jobs in automating routine tasks, ensuring data consistency, and enhancing overall system efficiency
 
 
 ## Security  
@@ -491,7 +491,7 @@ CALL brt.update_existing_passenger_phone_number (
 
 ```
 
-The input parameters -> `pass_id`, `old_passenger_phone_number`, and `new_passenger_phone_number` are checked for NULL behaviors, data type conformation to the defined schema, existence validations (for `pass_id` and `old_passenger_phone_number`), then the to-be-replaced phone number (`new_passenger_phone_number`) is then checked for format and content validations. The actual query represented by the variable `query` contains placeholders for the new phone number and the passenger ID given as `$1` and `$2`. 
+The input parameters = `pass_id`, `old_passenger_phone_number`, and `new_passenger_phone_number` are checked for NULL behaviors, data type conformation to the defined schema, existence validations (for `pass_id` and `old_passenger_phone_number`), then the to-be-replaced phone number (`new_passenger_phone_number`) is then checked for format and content validations. The actual query represented by the variable `query` contains placeholders for the new phone number and the passenger ID given as `$1` and `$2`. 
 
 These placeholder values would be replaced by sanitized user inputs and then executed, enforcing data security and integrity.
 
