@@ -94,14 +94,14 @@ In order to create a five-character string in PostgreSQL, we'd need to incorpora
 
 The `pgcrypto` extension was implemented for creating random numbers which are further used in payment information data such as card numbers and identification numbers for driver ID cards. This was further implemented using the hashing function `md5` would be used in this case and it accepts an input (message) of type 'string'. The message itself must be random as this function creates an identical hash for every identical message. 
 
-To create a random input for the function, we'd implememt the built-in `random()` function. This generates a random number (decimal) between 0 and 1 (similar to NumPy's `random.rand()` function).
+To create a random input for the function, we'd implememt the built-in `random()` function. This generates a random number (decimal) between `0` and `1` (similar to NumPy's `random.rand()` function).
 
-Recall that md5 only accepts strings so we'd need to cast the output of `random()` to generate random numbers but in string format. 
+Recall that `md5` only accepts strings so we'd need to cast the output of `random()` to generate random numbers but in string format. 
 
 Given as:
 
 ```sql
-    md5(random()::text)
+md5(random()::text)
 ```
 
 The output of the `md5()` function is a 32-charactered hexadecimal output of any character between `0` to `9` and `a` to `f`, which corresponds to the alphanumeric need of the `card_no` column in the `driver_identification_cards` table. Since we only need five characters, we can use a substring function to extract such. 
@@ -109,7 +109,7 @@ The output of the `md5()` function is a 32-charactered hexadecimal output of any
 Given as:
 
 ```sql
-    substr(md5(random()::text), 1, 5)
+substr(md5(random()::text), 1, 5)
 ```
 
 We can retrieve more than 5 characters but in this case, only 5 characters are required.
