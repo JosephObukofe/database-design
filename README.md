@@ -49,7 +49,7 @@ The entities are:
 - Tickets - `tickets`
 
 
-[View Schema Scripts](/schema-scripts)
+[View Schema Scripts](oltp/schema/schema.pgsql)
 
 ## Database Extensions
 
