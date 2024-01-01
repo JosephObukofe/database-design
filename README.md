@@ -207,6 +207,110 @@ CALL brt.delete_lga (
 Instead of constructing a static `DELETE` query and just replacing the value of the `WHERE` condition with the ID value, the cached query plan can be reused over and over with different ID values without the overhead of query compilation. This significantly boosts query performance and overall resource optimization in the database.
 
 
+#### Database Views
+
+Database views provide a virtual representation of data, allowing users to encapsulate complex queries into a simplified and modular representation. The need for establishing views for query performance optimization is to essentially 'store' (cache) the query logic. This is important in the case of complex queries as it prevents the need to write intricate queries repeatedly for executing virtually the same task(s). 
+
+Furthermore, views limits the columns or rows accessible to users, providing an additional layer of security as well as reducing the amount of data retrieved and/or processed at any time.
+
+The use of database views shines in `READ` operations where a subset of data is tend to be retrieved. For example, consider the database view that retrieves the list of vehicles paired to a driver.
+
+```sql
+-- Driver-Vehicle Pairing View
+
+CREATE VIEW brt.vw_get_paired_vehicles AS
+WITH CTE AS (
+    SELECT 
+        v.id,
+        v.vin,
+        v.plate_number,
+        v.model,
+        v.capacity,
+        t.name
+    FROM brt.vehicle v 
+    INNER JOIN brt.terminals t
+        ON v.terminal_id = t.id
+)
+
+SELECT 
+    CTE.vin,
+    CTE.plate_number,
+    CTE.model,
+    CTE.capacity,
+    CTE.name,
+    p.pair_date,
+    p.driver_id
+FROM CTE 
+INNER JOIN brt.driver_vehicle_pairings p 
+    ON CTE.id = p.vehicle_id 
+ORDER BY pair_date DESC;
+
+```
+
+The view above is created by the `CREATE VIEW` syntax and then represented by `brt.vw_get_paired_vehicles`. It is then reused as a database component in the `SELECT` query below:
+
+```sql
+
+CREATE OR REPLACE FUNCTION brt.get_paired_vehicles (
+    driver brt.driver_details.id%type
+)
+RETURNS TABLE(
+    vin varchar(20),
+    plate_number varchar(10),
+    model varchar(20),
+    capacity integer,
+    terminal varchar(20),
+    pair_date timestamp
+)
+LANGUAGE plpgsql 
+AS $$
+DECLARE 
+    query text;
+BEGIN
+    -- Input validation for null checks
+    IF driver IS NULL THEN 
+        RAISE EXCEPTION 'The driver parameter must not be null';
+    END IF;
+
+    -- Input validation for data type checks
+    IF NOT (
+        pg_typeof(driver) = 'integer'::regtype 
+    ) THEN
+        RAISE EXCEPTION 'Invalid data type for the provided field(s)';
+    END IF;
+
+    -- Content vaalidation to ascertain the existence of the driver
+    IF NOT EXISTS (SELECT 1 FROM brt.driver_details WHERE id = driver) THEN 
+        RAISE EXCEPTION 'The provided driver does not exist'
+            USING HINT = 'Ensure a valid driver ID is provided';
+    END IF;
+
+    query := (
+        'SELECT 
+            vin,
+            plate_number,
+            model,
+            capacity,
+            name, 
+            pair_date 
+        FROM brt.vw_get_paired_vehicles 
+        WHERE driver_id = $1;'
+    );
+
+    RETURN QUERY EXECUTE query USING driver;
+END;
+$$
+
+-- Executing the paired vehicles viewing function
+
+SELECT * FROM brt.get_paired_vehicles (
+    driver := [ ]
+);
+
+```
+
+The code above encapsulates the driver-vehicle pair view → `brt.vw_get_paired_vehicles` in the UDF → `brt.get_paired_vehicles` and retrieves a list of vehicles and their respective information based on the driver ID.
+
 ## Database Automation
 
 ### Key Strategies
